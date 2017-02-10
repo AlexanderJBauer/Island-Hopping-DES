@@ -9,8 +9,7 @@ class Agent
 	public:
 		// VIRTUAL ACTION FUNCTION
 		virtual void perform( );
-	protected:
-		
+
 };
 
 }

@@ -5,7 +5,13 @@
 */
 
 #include "Agent.h"       /* AttackerPerform, IDSPerform, SysAdminPerform */
+#include "Attack.h"
+#include "Computer.h"
 #include "Environment.h" /* TIME_STEP, MAX_TIME, COMMAND_LINE_ERROE_MESSAGE */
+#include "Event.h"
+#include "Fix.h"
+#include "MinBinHeap.h"
+#include "Notify.h"
 #include <iostream> /* cout, endl */
 #include <math.h>   /* log10 */
 #include <stdlib.h> /* atoi, rand, srand */

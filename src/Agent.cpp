@@ -7,7 +7,7 @@ void Agent::AttackerPerform( long long int currentTime,
 			     int           percentSuccess,
 			     int           percentDetect,
 			     int           numComputers,
-			     MinBinHeap &  eventQueue       )
+			     MinBinHeap &  eventQueue,    )
 {
 
 	if ( (rand()%100 + 1) <= percentSuccess )

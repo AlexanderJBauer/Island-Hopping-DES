@@ -27,7 +27,13 @@ class MinBinHeap
 				return false;
 		}
 
-		const Event* findMin() const { return eventArray[1]; }
+		const Event* findMin() const
+		{
+			if ( currentSize != 0 )
+				return eventArray[1];
+			else
+				return eventArray[0];
+		}
 
 		const Event* getPosition( int position ) const
 			{ return eventArray[position]; }

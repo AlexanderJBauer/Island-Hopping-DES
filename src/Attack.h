@@ -24,10 +24,16 @@ class Attack : public Event
 		int getSourceNum( ) const { return sourceNum; }
 
 		// VIRTUAL FUNCTION OVERRIDE
-		virtual void perform( )
+		virtual void perform( long long int            currentTime,
+				      std::vector<Computer*> & computerList )
 		{
-			
-
+			if ( !computerList[targetNum]->isCompromised() )
+			{
+				computerList[targetNum]->setCompromised(true);
+				computerList[targetNum]->
+					setTimeCompromised(currentTime);
+			}
+		}
 	private:
 		int sourceNum;
 };

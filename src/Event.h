@@ -9,7 +9,7 @@ class Event
 {
 	public:
 		// ACCESSORS
-		int getExecutionTime( ) const { return executionTime; }
+		long long int getExecutionTime( ) const {return executionTime;}
 
 		int getTargetNum( ) const { return targetNum; }
 

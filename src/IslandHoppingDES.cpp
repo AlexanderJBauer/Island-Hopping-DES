@@ -103,13 +103,14 @@ int main( int argc, char* argv[] )
 			  << percentDetect  << endl;
 ///////////////////////////////////////////////////////////////////////////////
 
-// Set up computer tree
-// Set up IDS
-// Set up attacker
-// Set up Sysadmin
+	std::vector<Computer*> computerList;
+	for( int i = 0; i <= numComputers; i++ )
+		computerList.push_back(new Computer(i));
+
 	long long int currentTime = 0;
 	long long int lastFixTime = 0;
-
+	long long int nextExec    = 0;
+	Event*        lastDelete;
 	while ( currentTime <= MAX_TIME )
 	{
 		if ( currentTime % 1000 == 0 )
@@ -117,11 +118,18 @@ int main( int argc, char* argv[] )
 					 percentDetect, numComputers,
 					 eventQueue                  );
 		//update infected computers
-		while ( eventQueue.getRootArrivalTime( ) == currentTime )
+		if ( eventQueue.getCurrentSize != 0 )
 		{
-			eventQueue.deleteMin( );
+			nextExec = eventQue.findMin()->getExecutionTime();
+			while ( nextExec == currentTime
+				&& eventQueue.getCurrentSize() != 0 )
+			{
+				lastDelete = eventQueue.deleteMin( );
+				lastDelete.perform();
+				nextExec =
+				       eventQueue.findMin()->getExecutionTime();
+			}
 		}
-
 		//Check num infected computers
 
 		currentTime = currentTime + TIME_STEP;

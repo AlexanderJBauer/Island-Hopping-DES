@@ -14,12 +14,13 @@ void Agent::AttackerPerform( long long int currentTime,
 	{
 		targetNum = rand()%numComputers + 1;
 
-		Attack newAttack =
-		    new Attack( currentTime + Environment::LATENCY, targetNum );
+		Event* newAttack = new Attack
+			( currentTime + Environment::LATENCY, targetNum, -1 );
+
 		eventQueue.insert( newAttack );
 
 		Agent::IDSPerform( currentTime + Environment::LATENCY,
-				   percentDetect, targetNum, -1, eventQueue )
+				   percentDetect, targetNum, -1, eventQueue );
 	}
 }
 
@@ -31,12 +32,13 @@ void Agent::SysAdminPerform( long long int   currentTime,
 {
 	if ( lastFixTime > currentTime )
 	{
-		Fix newFix = new Fix( lastFixTime + 10000, targetNum );
+		Event* newFix = new Fix( lastFixTime + 10000, targetNum );
+
 		eventQueue.insert( newFix );
 
 		if ( sourceNum != -1 )
 		{
-			Fix newFix2 = new Fix( lastFixTime + 10000, sourceNum );
+			Event* newFix2= new Fix(lastFixTime + 10000, sourceNum);
 			eventQueue.insert( newFix2 );
 		}
 
@@ -44,12 +46,12 @@ void Agent::SysAdminPerform( long long int   currentTime,
 	}
 	else
 	{
-		Fix newFix = new Fix( currentTime + 10000, targetNum );
+		Event* newFix = new Fix( currentTime + 10000, targetNum );
 		eventQueue.insert( newFix );
 
 		if ( sourceNum != -1 )
 		{
-			Fix newFix2 = new Fix( currentTime + 10000, sourceNum );
+			Event* newFix2= new Fix(currentTime + 10000, sourceNum);
 			eventQueue.insert( newFix2 );
 		}
 
@@ -65,7 +67,7 @@ void Agent::IDSPerform( long long int currentTime,
 {
 	if ( (rand()%100 + 1) <= percentDetect )
 	{
-		Notify newNote =
+		Event* newNote =
 		        new Notify(currentTime + Environment::LATENCY,
 				   targetNum, sourceNume );
 		eventQueue.insert( newNote );

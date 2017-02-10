@@ -13,6 +13,10 @@ class Event
 
 		int getTargetNum( ) const { return targetNum; }
 
+		// MUTATORS
+		void setExecutionTime( long long int newExecutionTime )
+			{ executionTime = newExecutionTime; }
+
 		// VIRTUAL ACTION FUNCTION
 		virtual void perform( );
 

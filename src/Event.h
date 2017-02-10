@@ -18,7 +18,13 @@ class Event
 			{ executionTime = newExecutionTime; }
 
 		// VIRTUAL ACTION FUNCTION
-		virtual void perform( );
+		virtual void perform( long long int            currentTime,
+				      long long int &          lastFixTime,
+				      int                      percentSuccess,
+				      int                      percentDetect,
+				      int                      numComputers,
+				      std::vector<Computer*> & computerList
+				      MinBinHeap *&            eventQueue  );
 
 	protected:
 		// MEMBER VARIABLES

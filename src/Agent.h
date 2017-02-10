@@ -12,19 +12,25 @@ class Agent
 					     int             percentSuccess,
 					     int             percentDetect,
 					     int             numComputers
-					     MinBinHeap &    eventQueue   );
+					     MinBinHeap *&   eventQueue   );
 
 		static void SysAdminPerform( long long int   currentTime,
                 			     long long int & lastFixTime,
                 			     int             targetNum,
 					     int             sourceNum,
-                        		     MinBinHeap &    eventQueue   );
+                        		     MinBinHeap *&   eventQueue   );
 
 		static void IDSPerform     ( long long int   currentTime,
 			                     int             percentDetect,
                    			     int             targetNum,
                    			     int             sourceNum,
-                   			     MinBinHeap &    eventQueue   );
+                   			     MinBinHeap *&   eventQueue   );
+
+		static void ComputerPerform( long long int   currentTime,
+			                     int             sourceNum,
+                   			     int             percentSuccess,
+                   			     int             numComputers,
+                   			     MinBinHeap *&   eventQueue   );
 
 };
 

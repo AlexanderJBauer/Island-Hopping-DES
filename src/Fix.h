@@ -17,10 +17,19 @@ class Fix : public Event
 		}
 
 		// VIRTUAL FUNCTION OVERRIDE
-		virtual void perform( std::vector<Computer*> computerList )
+		virtual void perform( long long int            currentTime,
+				      long long int &          lastFixTime,
+				      int                      percentSuccess,
+				      int                      percentDetect,
+				      int		       numComputers,
+				      std::vector<Computer*> & computerList,
+				      MinBinHeap *&            eventQueue   )
 		{
 			computerList[targetNum]->setCompromised(false);
 			computerList[targetNum]->setTimeCompromised(-1);
+                        std::cout << "FIX: " << executionTime << ", "
+                                  << targetNum << "\n";
+
 		}
 
 

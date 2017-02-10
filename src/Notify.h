@@ -24,7 +24,19 @@ class Notify : public Event
 		int getSourceNum( ) const { return sourceNum; }
 
 		// VIRTUAL FUNCTION OVERRIDE
-		virtual void perform( );
+		virtual void perform( long long int            currentTime,
+				      long long int &          lastFixTime,
+				      int                      percentSuccess,
+				      int                      percentDetect,
+				      int                      numComputers,
+				      std::vector<Computer*> & computerList,
+				      MinBinHeap *&            eventQueue  )
+		{
+			SysAdminPerform( currentTime, lastFixTime, targetNum,
+						      sourceNum,   eventQueue);
+                        std::cout << "NOTIFY: " << executionTime << ", "
+                                  << sourceNum << ", " << targetNum << "\n";
+		}
 
 	private:
 		int sourceNum;

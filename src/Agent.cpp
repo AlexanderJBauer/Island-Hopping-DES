@@ -7,20 +7,17 @@ void Agent::AttackerPerform( long long int currentTime,
 			     int           percentSuccess,
 			     int           percentDetect,
 			     int           numComputers,
-			     MinBinHeap &  eventQueue,    )
+			     MinBinHeap *& eventQueue,    )
 {
 
 	if ( (rand()%100 + 1) <= percentSuccess )
 	{
-		targetNum = rand()%numComputers + 1;
+		int targetNum = rand()%numComputers + 1;
 
 		Event* newAttack = new Attack
 			( currentTime + Environment::LATENCY, targetNum, -1 );
 
 		eventQueue.insert( newAttack );
-
-		Agent::IDSPerform( currentTime + Environment::LATENCY,
-				   percentDetect, targetNum, -1, eventQueue );
 	}
 }
 
@@ -28,7 +25,7 @@ void Agent::SysAdminPerform( long long int   currentTime,
 			     long long int & lastFixTime,
 			     int             targetNum,
 			     int             sourceNum,
-			     MinBinHeap &    eventQueue   )
+			     MinBinHeap *&   eventQueue   )
 {
 	if ( lastFixTime > currentTime )
 	{
@@ -63,7 +60,7 @@ void Agent::IDSPerform( long long int currentTime,
 		        int           percentDetect,
 		        int           targetNum,
 		        int           sourceNum,
-		        MinBinHeap &  eventQueue    )
+		        MinBinHeap *& eventQueue    )
 {
 	if ( (rand()%100 + 1) <= percentDetect )
 	{
@@ -75,4 +72,24 @@ void Agent::IDSPerform( long long int currentTime,
 
 }
 
+void Agent::ComputerPerform( long long int   currentTime,
+                             int             sourceNum,
+                             int             percentSuccess,
+                             int             numComputers,
+                             MinBinHeap *&   eventQueue   )
+{
+	if ( (rand()%100 + 1) <= percentSuccess )
+	{
+		int targetNum = sourceNum;
+		while (targetNum == sourceNum)
+			targetNum = rand()%numComputers + 1;
+
+		Event* newAttack = new Attack
+			( currentTime + Environment::LATENCY, targetNum,
+							      sourceNum );
+
+		eventQueue.insert( newAttack );
+	}
+
+}
 }

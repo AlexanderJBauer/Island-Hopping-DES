@@ -107,17 +107,56 @@ int main( int argc, char* argv[] )
 	for( int i = 0; i <= numComputers; i++ )
 		computerList.push_back(new Computer(i));
 
-	long long int currentTime = 0;
-	long long int lastFixTime = 0;
-	long long int nextExec    = 0;
+	MinBinHeap* eventQueue = new MinBinHeap(300);
+
+	long long int currentTime    = 0;
+	long long int lastFixTime    = 0;
+	long long int nextExec       = 0;
+	int           numCompromised = 0;
+	int           numPopped      = 0;
 	Event*        lastDelete;
+
 	while ( currentTime <= MAX_TIME )
 	{
+		numCompromised = 0;
+
 		if ( currentTime % 1000 == 0 )
 			AttackerPerform( currentTime, percentSuccess,
 					 percentDetect, numComputers,
 					 eventQueue                  );
-		//update infected computers
+
+		for( int i = 0; i <= numComputers; i++ )
+		{
+			if ( computerList[i]->isCompromised() )
+			{
+				if ( ((currentTime
+                                      -computerList[i]->getTimeCompromised())
+				      %1000) == 0
+				{
+					ComputerPerform( currentTime,
+							 i,
+							 percentSuccess,
+							 numComputers,
+							 eventQueue  );
+				}
+				numCompromised++;
+			}
+			else
+				numOkay++;
+		}
+
+		if ( numCompromised >= numComputers/2)
+		{
+			std::cout << "Attacker wins\n";
+			return 0;
+		}
+
+		if ( numPopped > 0 && numCompromised == 0 )
+		{
+			std::cout << "System Administrator wins\n"
+			return 0;
+		}
+
 		if ( eventQueue.getCurrentSize != 0 )
 		{
 			nextExec = eventQue.findMin()->getExecutionTime();
@@ -128,12 +167,13 @@ int main( int argc, char* argv[] )
 				lastDelete.perform();
 				nextExec =
 				       eventQueue.findMin()->getExecutionTime();
+				numPopped ++;
 			}
 		}
-		//Check num infected computers
 
 		currentTime = currentTime + TIME_STEP;
 	}
+	std::cout << "Its a draw\n";
 	return 0;
 
 }

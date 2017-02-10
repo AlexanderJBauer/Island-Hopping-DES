@@ -2,6 +2,7 @@
 #define Bauer_Attack_H
 
 #include "Agent.h"
+#include <iostream>
 
 namespace Bauer
 {
@@ -25,7 +26,12 @@ class Attack : public Event
 
 		// VIRTUAL FUNCTION OVERRIDE
 		virtual void perform( long long int            currentTime,
-				      std::vector<Computer*> & computerList )
+				      long long int &          lastFixTime,
+				      int                      percentSuccess,
+				      int                      percentDetect,
+				      int                      numComputers,
+				      std::vector<Computer*> & computerList,
+				      MinBinHeap *&            eventQueue  );
 		{
 			if ( !computerList[targetNum]->isCompromised() )
 			{
@@ -33,7 +39,14 @@ class Attack : public Event
 				computerList[targetNum]->
 					setTimeCompromised(currentTime);
 			}
+
+			IDSPerform( currentTime, percentDetect, targetNum,
+						 sourceNum,     eventQueue );
+
+			std::cout << "ATTACK: " << executionTime << ", "
+				  << sourceNum << ", " << targetNum << "\n";
 		}
+
 	private:
 		int sourceNum;
 };

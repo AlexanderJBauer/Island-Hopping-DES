@@ -11,19 +11,23 @@ class Notify : public Event
 
 	public:
 		// CONSTRUCTORS
-		Notify( int initialTime, Bauer::Attack & initialAttackRef );
+		Notify( long long int newExecutionTime,
+			int           newTargetNum,
+			int           newSourceNum      )
+		{
+			executionTime = newExecutionTime;
+			targetNum     = newTargetNum;
+			sourceNum     = newSourceNum;
+		}
 
 		// ACCESSORS
-		const Bauer::Attack & getAttackRef( ) const;
-
-		// MUTATORS
-		void setAttackRef( Bauer::Attack & newAttackRef );
+		int getSourceNum( ) const { return sourceNum; }
 
 		// VIRTUAL FUNCTION OVERRIDE
 		virtual void perform( );
 
 	private:
-		Bauer::Attack & attackRef;
+		int sourceNum;
 };
 
 }

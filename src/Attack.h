@@ -11,23 +11,25 @@ class Attack : public Event
 
 	public:
 		// CONSTRUCTORS
-		Attack( int initialTime, Bauer::Agent    & initialSource,
-					 Bauer::Computer & initialTarget );
+		Attack( long long int newExecutionTime,
+			int           newTargetNum
+			int           newSourceNum     )
+		{
+			executionTime = newExecutionTime;
+			targetNum     = newTargetNum;
+			sourceNum     = newSourceNum;
+		}
 
 		// ACCESSORS
-		const Bauer::Agent    & getSource( ) const;
-		const Bauer::Computer & getTarget( ) const;
-
-		// MUTATORS
-		void setSource( Bauer::Agent & newSource );
-		void setTarget( Bauer::Computer & newTarget );
+		int getSourceNum( ) const { return sourceNum; }
 
 		// VIRTUAL FUNCTION OVERRIDE
-		virtual void perform( );
+		virtual void perform( )
+		{
+			
 
 	private:
-		Bauer::Agent    & source;
-		Bauer::Computer & target;
+		int sourceNum;
 };
 
 }

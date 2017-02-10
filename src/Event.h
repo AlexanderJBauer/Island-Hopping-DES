@@ -8,23 +8,18 @@ namespace Bauer
 class Event
 {
 	public:
-		// CONSTRUCTORS
-		explicit Event( int initialTime );
-
 		// ACCESSORS
-		int getTime( ) const;
+		int getExecutionTime( ) const { return executionTime; }
 
-		// MUTATORS
-		void decreaseTime( int decrement );
-		void increaseTime( int increment );
+		int getTargetNum( ) const { return targetNum; }
 
 		// VIRTUAL ACTION FUNCTION
 		virtual void perform( );
 
 	protected:
 		// MEMBER VARIABLES
-		int time; // Time until event happens/ changes environment state
-
+		long long int executionTime; // Time when event happens
+		int           targetNum; // Number corresponding to target node
 };
 
 }

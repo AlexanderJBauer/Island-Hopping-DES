@@ -1,3 +1,8 @@
+// This class was originally made to make Super.cpp
+// look nicer by holding a very large string, but its
+// illegal to do what I was trying. Ended up keeping some
+// constants in this class.
+
 class Environment
 {
 	public:

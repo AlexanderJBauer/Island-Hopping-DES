@@ -1,3 +1,5 @@
+// This class holds the implementation of my queue
+
 class MinBinHeap
 {
 	public:
@@ -11,7 +13,7 @@ class MinBinHeap
 			eventArray[0] = falseEvent;
 		}
 
-		// ACCESSORS
+		// isEmpty function
 		bool  isEmpty() const
 		{
 			if( currentSize == 0)
@@ -36,7 +38,7 @@ class MinBinHeap
 		// MUTATORS
 		void insert( Event* newEvent )
 		{
-			if ( currentSize == capacity -1 )
+			if ( currentSize == capacity - 2)
 				resizeArray(capacity * 2);
 
 			if ( currentSize == 0 )

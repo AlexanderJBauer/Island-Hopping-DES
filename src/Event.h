@@ -1,3 +1,7 @@
+// This is the super class of Attack, Notify, and Fix. It is what is used
+// as the type of the array in the binary heap. Has a bogus version of
+// perform
+
 class Event
 {
 	public:
@@ -15,6 +19,7 @@ class Event
 		int getTargetNum( ) const { return targetNum; }
 
 		int getEventNum( ) const { return eventNum; }
+
 		// MUTATORS
 		void setExecutionTime( long long int newExecutionTime )
 			{ executionTime = newExecutionTime; }

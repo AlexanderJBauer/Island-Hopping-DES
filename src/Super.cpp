@@ -1,3 +1,7 @@
+//To compile this simulation, all you have to do is
+// g++ -o DesiredName Super.cpp
+
+
 #include <iostream> /* cout, endl */
 #include <math.h>   /* log10 */
 #include <stdlib.h> /* atoi, rand, srand */

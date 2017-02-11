@@ -6,339 +6,13 @@
 #include <time.h>   /* time */
 #include <vector>
 
-class Environment
-{
-	public:
-		static const int           TIME_STEP = 100;
-		static const long long int MAX_TIME  = 8640000000;
-		static const int           LATENCY   = 100;
-};
-
-class Event
-{
-	public:
-		// CONSTRUCTOR
-		Event( long long int newExecutionTime, int newTargetNum)
-		{
-			executionTime = newExecutionTime;
-			targetNum     = newTargetNum;
-			eventNum      = 0;
-		}
-
-		// ACCESSORS
-		long long int getExecutionTime( ) const {return executionTime;}
-
-		int getTargetNum( ) const { return targetNum; }
-
-		int getEventNum( ) const { return eventNum; }
-		// MUTATORS
-		void setExecutionTime( long long int newExecutionTime )
-			{ executionTime = newExecutionTime; }
-
-		// VIRTUAL ACTION FUNCTION
-		virtual void perform( ){return;}
-
-	protected:
-		// MEMBER VARIABLES
-		long long int executionTime; // Time when event happens
-		int           targetNum; // Number corresponding to target node
-		int           eventNum; //USED TO DIFFERENTIATE FOR CASTING
-};
-
-class MinBinHeap
-{
-	public:
-		// CONSTRUCTORS
-		explicit MinBinHeap( int newCapacity = 100 )
-		{
-			currentSize = 0;
-			capacity    = newCapacity;
-			eventArray  = new Event*[newCapacity];
-			Event* falseEvent = new Event(-1, 0);
-			eventArray[0] = falseEvent;
-		}
-
-		// ACCESSORS
-		bool  isEmpty() const
-		{
-			if( currentSize == 0)
-				return true;
-			else
-				return false;
-		}
-
-		const Event* findMin() const
-		{
-			if ( currentSize != 0 )
-				return eventArray[1];
-			else
-				return eventArray[0];
-		}
-
-		const Event* getPosition( int position ) const
-			{ return eventArray[position]; }
-
-		int getCurrentSize() const { return currentSize; }
-
-		// MUTATORS
-		void insert( Event* newEvent )
-		{
-			if ( currentSize == capacity -1 )
-				resizeArray(capacity * 2);
-
-			if ( currentSize == 0 )
-			{
-				eventArray[1] =  newEvent;
-				currentSize = 1;
-			}
-
-			// Percolate up
-			int hole = currentSize + 1;
-			while ( newEvent->getExecutionTime()
-				< eventArray[hole / 2]->getExecutionTime() )
-			{
-				eventArray[hole] = eventArray[hole / 2];
-				hole = hole / 2;
-			}
-			eventArray[hole] = newEvent;
-
-			// Update size
-			currentSize = currentSize + 1;
-		}
-
-		Event* deleteMin( )
-		{
-			Event* min = eventArray[1];
-			eventArray[1] = eventArray[currentSize];
-			currentSize = currentSize - 1;
-			percolateDown( 1 );
-			return min;
-		}
-
-		void decreaseKey( int position, int delta )
-		{
-			long long int newExecTime =
-				eventArray[position]->getExecutionTime()-delta;
-
-			eventArray[position]->setExecutionTime( newExecTime );
-			Event* tmp = eventArray[position];
-			// Percolate up
-			int hole = position;
-			while ( tmp->getExecutionTime()
-				< eventArray[hole/2]->getExecutionTime() )
-			{
-				eventArray[hole] = eventArray[hole /2];
-				hole = hole / 2;
-			}
-			eventArray[hole] = tmp;
-		}
-
-		void increaseKey( int position, int delta )
-		{
-			long long int newExecTime =
-				eventArray[position]->getExecutionTime()+delta;
-
-			eventArray[position]->setExecutionTime( newExecTime );
-			percolateDown( position );
-		}
-
-
-	private:
-		// MEMBER VARIABLES
-		int     currentSize;
-		int     capacity;
-		Event** eventArray;
-
-		// HELPER FUNCTIONS
-		void resizeArray(int newCapacity)
-		{
-			Event** newEventArray = new Event*[newCapacity];
-			for( int i = 0; i < currentSize; i++ )
-				newEventArray[i] = eventArray[i];
-
-			delete [] eventArray;
-			eventArray = newEventArray;
-			capacity   = newCapacity;
-		}
-
-		void percolateDown( int hole )
-		{
-			int child;
-			Event* tmp = eventArray[hole];
-			for( ; hole * 2 <= currentSize; hole = child )
-			{
-				child = hole * 2;
-				if( child != currentSize &&
-				    eventArray[child+1]->getExecutionTime()
-				    < eventArray[child]->getExecutionTime() )
-					++child;
-				if( eventArray[child]->getExecutionTime()
-				    < tmp->getExecutionTime() )
-					eventArray[hole] = eventArray[child];
-				else
-					break;
-			}
-			eventArray[hole] = tmp;
-		}
-};
-
-class Computer
-{
-	public:
-		Computer( int newComputerNum )
-		{
-			computerNum = newComputerNum;
-			compromised = false;
-			timeCompromised = -1;
-		}
-
-		bool isCompromised( ) const { return compromised; }
-
-		long long int getTimeCompromised( ) const
-					    { return timeCompromised; }
-
-		void setCompromised( bool newVal ) { compromised = newVal; }
-
-		void setTimeCompromised(long long int t) {timeCompromised = t;}
-
-	private:
-		int  computerNum;
-		bool compromised;
-		long long int timeCompromised;
-};
-
-class Fix : public Event
-{
-
-	public:
-		// CONSTRUCTORS
-		Fix( long long int newExecutionTime, int newTargetNum )
-		: Event( newExecutionTime, newTargetNum )
-		{  eventNum = 3; }
-
-		// VIRTUAL FUNCTION OVERRIDE
-		virtual void perform( long long int            currentTime,
-				      long long int &          lastFixTime,
-				      int                      percentSuccess,
-				      int                      percentDetect,
-				      int		       numComputers,
-				      std::vector<Computer*> & computerList,
-				      MinBinHeap *&            eventQueue   )
-		{
-			computerList[targetNum]->setCompromised(false);
-			computerList[targetNum]->setTimeCompromised(-1);
-                        std::cout << "FIX: " << executionTime << ", "
-                                  << targetNum << "\n";
-
-		}
-
-
-};
-
-class Notify : public Event
-{
-
-	public:
-		// CONSTRUCTORS
-		Notify( long long int newExecutionTime,
-			int           newTargetNum,
-			int           newSourceNum      )
-		: Event( newExecutionTime, newTargetNum )
-		{
-			sourceNum     = newSourceNum;
-			eventNum      = 2;
-		}
-
-		// ACCESSORS
-		int getSourceNum( ) const { return sourceNum; }
-
-		static void SysAdminPerform( long long int   currentTime,
-			     		     long long int & lastFixTime,
-			     		     int             targetNum,
-			     		     int             sourceNum,
-			     		     MinBinHeap *&   eventQueue   );
-
-		// VIRTUAL FUNCTION OVERRIDE
-		virtual void perform( long long int            currentTime,
-				      long long int &          lastFixTime,
-				      int                      percentSuccess,
-				      int                      percentDetect,
-				      int                      numComputers,
-				      std::vector<Computer*> & computerList,
-				      MinBinHeap *&            eventQueue  )
-		{
-			SysAdminPerform( currentTime, lastFixTime, targetNum,
-						      sourceNum,   eventQueue);
-                        std::cout << "NOTIFY: " << executionTime << ", "
-                                  << sourceNum << ", " << targetNum << "\n";
-		}
-
-	private:
-		int sourceNum;
-};
-
-class Attack : public Event
-{
-	private:
-		int sourceNum;
-
-	public:
-		// CONSTRUCTORS
-		Attack( long long int newExecutionTime,
-			int           newTargetNum,
-			int           newSourceNum     )
-		: Event(newExecutionTime, newTargetNum)
-		{
-			sourceNum     = newSourceNum;
-			eventNum      = 1;
-		}
-
-		// ACCESSORS
-		int getSourceNum( ) const { return sourceNum; }
-
-		static void IDSPerform( long long int currentTime,
-				        int           percentDetect,
-				        int           targetNum,
-				        int           sourceNum,
-				        MinBinHeap *& eventQueue    )
-		{
-			if ( (rand()%100 + 1) <= percentDetect )
-			{
-				Event* newNote =
-		        	  new Notify(currentTime + Environment::LATENCY,
-				             targetNum, sourceNum );
-				eventQueue->insert( newNote );
-			}
-
-
-		}
-
-		// VIRTUAL FUNCTION OVERRIDE
-		virtual void perform( long long int            currentTime,
-				      long long int &          lastFixTime,
-				      int                      percentSuccess,
-				      int                      percentDetect,
-				      int                      numComputers,
-				      std::vector<Computer*> & computerList,
-				      MinBinHeap *&            eventQueue  )
-		{
-			if ( !computerList[targetNum]->isCompromised() )
-			{
-				computerList[targetNum]->setCompromised(true);
-				computerList[targetNum]->
-					setTimeCompromised(currentTime);
-			}
-
-			IDSPerform( currentTime, percentDetect, targetNum,
-						 sourceNum,     eventQueue );
-
-			std::cout << "ATTACK: " << executionTime << ", "
-				  << sourceNum << ", " << targetNum << "\n";
-		}
-
-};
-
-
+#include "Environment.h"
+#include "Event.h"
+#include "MinBinHeap.h"
+#include "Computer.h"
+#include "Fix.h"
+#include "Notify.h"
+#include "Attack.h"
 
 static void AttackerPerform( long long int currentTime,
 			     int           percentSuccess,
@@ -526,7 +200,7 @@ int main( int argc, char* argv[] )
 					 percentDetect, numComputers,
 					 eventQueue                  );
 
-		for( int i = 0; i <= numComputers; i++ )
+		for( int i = 1; i <= numComputers; i++ )
 		{
 			if ( computerList[i]->isCompromised() )
 			{
@@ -567,7 +241,7 @@ int main( int argc, char* argv[] )
 
 				if (lastDelete->getEventNum() == 1)
 				{
-				dynamic_cast<Attack*>(lastDelete)->
+					dynamic_cast<Attack*>(lastDelete)->
 						perform(currentTime,
 						    lastFixTime,
 						    percentSuccess,
@@ -577,7 +251,7 @@ int main( int argc, char* argv[] )
 
 				if (lastDelete->getEventNum() == 2)
 				{
-				dynamic_cast<Notify*>(lastDelete)->
+					dynamic_cast<Notify*>(lastDelete)->
 						perform(currentTime,
 						    lastFixTime,
 						    percentSuccess,
@@ -587,7 +261,7 @@ int main( int argc, char* argv[] )
 
 				if (lastDelete->getEventNum() == 3)
 				{
-				dynamic_cast<Fix*>(lastDelete)->
+					dynamic_cast<Fix*>(lastDelete)->
 						perform(currentTime,
 						    lastFixTime,
 						    percentSuccess,

@@ -14,6 +14,7 @@
 #include "Notify.h"
 #include "Attack.h"
 
+// Simulates an Attacker. Only passes successful attacks to queue
 static void AttackerPerform( long long int currentTime,
 			     int           percentSuccess,
 			     int           percentDetect,
@@ -33,6 +34,8 @@ static void AttackerPerform( long long int currentTime,
 
 }
 
+// Simulates SysAdmin action when necessary
+// lastFixTime keeps track of the fixes on hold
 void Notify::SysAdminPerform( long long int   currentTime,
 			      long long int & lastFixTime,
 			      int             targetNum,
@@ -68,7 +71,8 @@ void Notify::SysAdminPerform( long long int   currentTime,
 	}
 }
 
-
+// SImulates an attacking Computer when necessary
+// Only passes successful attacks to the queue
 static void ComputerPerform( long long int   currentTime,
                              int             sourceNum,
                              int             percentSuccess,
@@ -90,10 +94,12 @@ static void ComputerPerform( long long int   currentTime,
 
 }
 
+// Main function
 int main( int argc, char* argv[] )
 {
-
+	//random number generator seed
 	srand(time(NULL));
+	//Output for incorrect input arguments
 	const char*         COMMAND_LINE_ERROR_MESSAGE =
 			"This program takes in 3 command line arguments.\n"
 			"The order of the arguments is as follows:\n\n"
@@ -117,7 +123,7 @@ int main( int argc, char* argv[] )
 			"there is always a chance the attack gets\n"
 			"detected.\n**Argument is an integer x shuch that "
 			"0 <= x <= 100.\n\n";
-
+//////////////////////////////THIS WHOLE SECTION MEARLY CHECKS INPUT ARGS//////
 ///////////////////////////////////////////////////////////////////////////////
 	int numComputers   = 0;
 	int percentSuccess = 0;
@@ -177,29 +183,40 @@ int main( int argc, char* argv[] )
 			  << percentSuccess << std::endl
 			  << percentDetect  << std::endl;
 ///////////////////////////////////////////////////////////////////////////////
-
+///////////////////////////////////////////////////////////////////////////////
+	
+	//Array of Computers and loading of array
 	std::vector<Computer*> computerList;
 	for( int i = 0; i <= numComputers; i++ )
 		computerList.push_back(new Computer(i));
 
-	MinBinHeap* eventQueue = new MinBinHeap(300);
+	//Creation of priority queue
+	MinBinHeap* eventQueue = new MinBinHeap(1000);
 
+	// Time counter
 	long long int currentTime    = 1000;
+	// Time at which latest queued fix will happen
 	long long int lastFixTime    = 0;
+	// Time of next execution of any event
 	long long int nextExec       = 0;
+	// Keep track of computers for win conditions
 	int           numCompromised = 0;
+	// Just to not end the game before attack
 	int           numPopped      = 0;
+	// Used to hold popped events and execute them
 	Event*        lastDelete;
 
 	while ( currentTime <= Environment::MAX_TIME )
 	{
 		numCompromised = 0;
 
+		// Attacker attacks once every second
 		if ( currentTime % 1000 == 0 )
 			AttackerPerform( currentTime, percentSuccess,
 					 percentDetect, numComputers,
 					 eventQueue                  );
-
+		// Count compromises for win condition and perform necessary
+		// attacks
 		for( int i = 1; i <= numComputers; i++ )
 		{
 			if ( computerList[i]->isCompromised() )
@@ -218,18 +235,21 @@ int main( int argc, char* argv[] )
 			}
 		}
 
+		//Check win conditions
 		if ( numCompromised >= numComputers/2)
 		{
 			std::cout << "Attacker wins\n";
 			return 0;
 		}
 
+		//Check win conditions
 		if ( numPopped > 0 && numCompromised == 0 )
 		{
 			std::cout << "System Administrator wins\n";
 			return 0;
 		}
 
+		
 		if ( eventQueue->getCurrentSize() != 0 )
 		{
 

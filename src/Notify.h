@@ -1,3 +1,5 @@
+// This class holds the representation of a Notify event
+
 class Notify : public Event
 {
 
@@ -15,13 +17,14 @@ class Notify : public Event
 		// ACCESSORS
 		int getSourceNum( ) const { return sourceNum; }
 
+		// Method for SysAdminAction defined in Super.cpp
 		static void SysAdminPerform( long long int   currentTime,
 			     		     long long int & lastFixTime,
 			     		     int             targetNum,
 			     		     int             sourceNum,
 			     		     MinBinHeap *&   eventQueue   );
 
-		// VIRTUAL FUNCTION OVERRIDE
+		// Perform function for notify event
 		virtual void perform( long long int            currentTime,
 				      long long int &          lastFixTime,
 				      int                      percentSuccess,

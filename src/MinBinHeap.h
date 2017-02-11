@@ -47,18 +47,21 @@ class MinBinHeap
 				currentSize = 1;
 			}
 
-			// Percolate up
-			int hole = currentSize + 1;
-			while ( newEvent->getExecutionTime()
-				< eventArray[hole / 2]->getExecutionTime() )
+			else
 			{
-				eventArray[hole] = eventArray[hole / 2];
-				hole = hole / 2;
-			}
-			eventArray[hole] = newEvent;
+				// Percolate up
+				int hole = currentSize + 1;
+				while ( newEvent->getExecutionTime()
+				    < eventArray[hole / 2]->getExecutionTime() )
+				{
+				        eventArray[hole] = eventArray[hole / 2];
+					hole = hole / 2;
+				}
+				eventArray[hole] = newEvent;
 
-			// Update size
-			currentSize = currentSize + 1;
+				// Update size
+				currentSize = currentSize + 1;
+			}
 		}
 
 		Event* deleteMin( )

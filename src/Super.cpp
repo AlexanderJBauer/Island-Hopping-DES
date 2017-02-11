@@ -14,6 +14,11 @@
 #include "Notify.h"
 #include "Attack.h"
 
+// In this simulation I only pass successful events into the queue
+// The attacker serves as the primary source and after the attacker,
+// events continue to trigger other events as the attacker continues
+// to attack every second
+
 // Simulates an Attacker. Only passes successful attacks to queue
 static void AttackerPerform( long long int currentTime,
 			     int           percentSuccess,
@@ -184,7 +189,7 @@ int main( int argc, char* argv[] )
 			  << percentDetect  << std::endl;
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
-	
+
 	//Array of Computers and loading of array
 	std::vector<Computer*> computerList;
 	for( int i = 0; i <= numComputers; i++ )
@@ -249,51 +254,46 @@ int main( int argc, char* argv[] )
 			return 0;
 		}
 
-		
-		if ( eventQueue->getCurrentSize() != 0 )
+		// Runs through queues that are on deck
+		nextExec = eventQueue->findMin()->getExecutionTime();
+		while ( nextExec == currentTime
+			&& eventQueue->getCurrentSize() != 0 )
 		{
+			lastDelete = eventQueue->deleteMin( );
+
+			if (lastDelete->getEventNum() == 1)
+			{
+				dynamic_cast<Attack*>(lastDelete)->
+						perform(currentTime,
+						    lastFixTime,
+						    percentSuccess,
+						    percentDetect, numComputers,
+						    computerList, eventQueue);
+			}
+
+			if (lastDelete->getEventNum() == 2)
+			{
+				dynamic_cast<Notify*>(lastDelete)->
+						perform(currentTime,
+						    lastFixTime,
+						    percentSuccess,
+						    percentDetect, numComputers,
+						    computerList, eventQueue);
+			}
+
+			if (lastDelete->getEventNum() == 3)
+			{
+				dynamic_cast<Fix*>(lastDelete)->
+						perform(currentTime,
+						    lastFixTime,
+						    percentSuccess,
+						    percentDetect, numComputers,
+						    computerList, eventQueue);
+			}
 
 			nextExec = eventQueue->findMin()->getExecutionTime();
-			while ( nextExec == currentTime
-				&& eventQueue->getCurrentSize() != 0 )
-			{
-				lastDelete = eventQueue->deleteMin( );
 
-				if (lastDelete->getEventNum() == 1)
-				{
-					dynamic_cast<Attack*>(lastDelete)->
-						perform(currentTime,
-						    lastFixTime,
-						    percentSuccess,
-						    percentDetect, numComputers,
-						    computerList, eventQueue);
-				}
-
-				if (lastDelete->getEventNum() == 2)
-				{
-					dynamic_cast<Notify*>(lastDelete)->
-						perform(currentTime,
-						    lastFixTime,
-						    percentSuccess,
-						    percentDetect, numComputers,
-						    computerList, eventQueue);
-				}
-
-				if (lastDelete->getEventNum() == 3)
-				{
-					dynamic_cast<Fix*>(lastDelete)->
-						perform(currentTime,
-						    lastFixTime,
-						    percentSuccess,
-						    percentDetect, numComputers,
-						    computerList, eventQueue);
-				}
-
-				nextExec =
-				     eventQueue->findMin()->getExecutionTime();
-
-				numPopped ++;
-			}
+			numPopped ++;
 		}
 
 		currentTime = currentTime + Environment::TIME_STEP;
